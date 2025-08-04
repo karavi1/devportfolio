@@ -1,0 +1,14 @@
+[
+  {
+    "company": "Amazon",
+    "role": "Software Development Engineer II",
+    "duration": "Sep 2020 – Jun 2024",
+    "highlights": [
+      "Built and maintained ML infrastructure powering product recommendations and catalog enrichment.",
+      "Improved personalized recommendation models, achieving 12% CTA lift for replenishable items.",
+      "Led $1M+ revenue widget migration from design to deployment.",
+      "Delivered full-stack features across unfamiliar stacks in 2-week sprints.",
+      "Created reusable CDK libraries and reduced pipeline setup time by 70%."
+    ]
+  }
+]

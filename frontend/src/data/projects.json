@@ -1,0 +1,26 @@
+[
+  {
+    "title": "MathTutor",
+    "description": "An AI-powered math education tool that suggests personalized problems and assesses difficulty.",
+    "tech": ["FastAPI", "OpenAI", "SQLAlchemy", "React"],
+    "github": "https://github.com/karavi1/mathtutor",
+    "demo": "",
+    "status": "In progress"
+  },
+  {
+    "title": "Triance",
+    "description": "An open-source fitness tracking platform logging workouts and generating analytics.",
+    "tech": ["FastAPI", "React", "PostgreSQL", "AWS"],
+    "github": "https://github.com/karavi1/CFT",
+    "demo": "https://triance.app",
+    "status": "Live"
+  },
+  {
+    "title": "Resonote",
+    "description": "A reading and reflection app that curates and indexes learning content for retention.",
+    "tech": ["Flask", "React", "LangChain", "OpenAI"],
+    "github": "https://github.com/karavi1/resonote",
+    "demo": "",
+    "status": "Live (dev mode)"
+  }
+]
