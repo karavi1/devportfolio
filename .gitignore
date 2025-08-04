@@ -1,13 +1,38 @@
-# Frontend
-frontend/.next/
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+.cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# IDEs and tools
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# --- Node.js / Frontend ---
 frontend/node_modules/
+frontend/.next/
 frontend/.env.local
 
-# Backend
-backend/__pycache__/
-backend/.venv/
-backend/venv/
-backend/.env
+# Logs
+*.log
 
-# General
+# --- General ---
 .DS_Store
+*.bak
+*.tmp
+
+# Secrets
+backend/.env
