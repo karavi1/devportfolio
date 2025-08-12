@@ -4,11 +4,15 @@
     "role": "Software Development Engineer II",
     "duration": "Sep 2020 – Jun 2024",
     "highlights": [
-      "Built and maintained ML infrastructure powering product recommendations and catalog enrichment.",
-      "Improved personalized recommendation models, achieving 12% CTA lift for replenishable items.",
-      "Led $1M+ revenue widget migration from design to deployment.",
-      "Delivered full-stack features across unfamiliar stacks in 2-week sprints.",
-      "Created reusable CDK libraries and reduced pipeline setup time by 70%."
+      "Built and maintained ML infrastructure that aggregates upstream models into global datasets, which power catalog data for retail and third-party clients (e.g., Samsung). Models have improved recommendations (up to 12% in CTA) for replenishable products based on personalized purchase history versus static population trends",
+      "Implemented and maintained APIs and backend services supporting high-traffic customer-facing widgets (Dash Buttons, Your Essentials, Purchase Reminders, and Past Order Information), doubling reorder rates of relevant products. These products have been productionized worldwide and serve every customer that uses Amazon.com (millions)",
+      "Led a 9-month migration of a high-revenue widget ($1M+, since the widget is on a highly interactive Detail Page) from design to deployment, including onboarding and development in a functional internal backend language",
+      "Delivered full-stack features across unfamiliar stacks in short and rapid timeframes (~2 weeks), prioritizing delivery and iteration",
+      "Created reusable developer libraries with AWS CDK constructs to automate ML pipeline workflows and infrastructure provisioning, lowering setup time by 70%. Built CloudWatch alerting dashboards, reducing pipeline failures by up to 35% and improving triage speed",
+      "Authored, reviewed, and executed 7+ technical designs, including new system designs, service migrations, widget experiments, and pipeline improvements, with a focus on purpose, technical architecture, operational maintenance, and milestone/timeline execution. These have been done both independently and with other developers",
+      "Served as bi-monthly on-call, resolved production incidents within 1-2 days, and mentored 3 junior devs on system designs, code quality and deployment best practices, and cross-team collaboration",
+      "Established runbooks, SOPs, monitoring, and automation to reduce operational overhead and ticket intake by 50%, allowing developers and team to focus on product roadmap execution",
+      "Worked with other teams in Amazon both as a client and as a service. Consistently coordinated and aligned across 5+ stakeholders (dev teams, data scientists, QA, UX, product, business and leadership exec) to accommodate everyone’s needs in a timely fashion. Helped shape product direction through a developer-focused lens"
     ]
   }
 ]
