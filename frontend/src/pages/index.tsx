@@ -1,54 +1,77 @@
 import Head from "next/head";
+import Link from "next/link";
 import Navbar from "@/components/Navbar";
 
 export default function Home(): JSX.Element {
   return (
     <>
       <Head>
-        <title>Kaushik Ravi | Full-Stack & ML Engineer</title>
+        <title>Kaushik Ravi | Full-Stack Developer & Freelance Consultant</title>
         <meta
           name="description"
-          content="Full-stack engineer specializing in FastAPI, React, and cloud deployments. Projects, experience, and AI tools by Kaushik Ravi."
+          content="Full-stack developer and consultant specializing in FastAPI, React, cloud deployments, and ML pipelines. Available for freelance or consulting projects."
         />
-        <meta property="og:title" content="Kaushik Ravi | Full-Stack & ML Engineer" />
+        <meta property="og:title" content="Kaushik Ravi | Full-Stack Developer & Freelance Consultant" />
         <meta
           property="og:description"
-          content="I build scalable APIs, data/ML pipelines, and polished web apps. Explore Triance, Resonote, and more."
+          content="I provide scalable API development, data/ML pipelines, and polished web apps. Available as a freelancer or consultant for your project needs."
         />
         <meta property="og:type" content="website" />
       </Head>
 
       <Navbar />
 
-      <main className="flex flex-col items-center justify-center px-6 md:px-10 lg:px-16 min-h-screen bg-gradient-to-b from-gray-50 to-white">
-        <section className="text-center py-20">
-          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight">
-            Building Scalable APIs, Data Pipelines & Fast Web Apps
+      <main className="relative overflow-hidden">
+        <div className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-slate-50 via-white to-blue-50" />
+
+        <section className="mx-auto flex min-h-[80vh] max-w-4xl flex-col items-center justify-center px-6 text-center">
+          <h1 className="text-4xl font-extrabold tracking-tight md:text-6xl">
+            Full-Stack Developer & Consultant for Your Next Project
           </h1>
-          <p className="mt-6 text-lg md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-            I’m Kaushik — a full-stack engineer with a strong foundation in systems
-            design, ML infrastructure, and product development. I’ve shipped products
-            from concept to launch in health, education, and knowledge management.
+
+          <p className="mt-6 max-w-2xl text-base leading-relaxed text-gray-600 md:text-lg">
+            I’m Kaushik Ravi — a full-stack software engineer with a strong foundation in systems design and ML infrastructure.
+            Previously SDE II at Amazon; now helping startups, teams, and business owners ship polished products end-to-end across health, education, and knowledge.
+            Available for freelance and consulting opportunities.
           </p>
-          <div className="mt-10 flex flex-wrap justify-center gap-4">
-            <a
-              href="/projects"
-              className="rounded-2xl px-6 py-3 text-base font-semibold shadow-sm border hover:shadow-md transition bg-white"
-            >
-              View Projects
-            </a>
-            <a
-              href="/experience"
-              className="rounded-2xl px-6 py-3 text-base font-semibold shadow-sm border hover:shadow-md transition bg-white"
-            >
-              Work Experience
-            </a>
-            <a
+
+          <p className="mt-4 text-gray-700">Here are some of the skills I bring to the table:</p>
+
+          <ul className="mt-14 flex flex-col items-start gap-4 text-sm text-gray-700">
+            <li className="w-full max-w-4xl">
+              <strong className="font-bold text-blue-900 mr-1">Backend:</strong>
+              Python, Java, Ruby, TypeScript, SQL, Scala, FastAPI, Flask, Spring MVC, CDK, AWS DynamoDB, AWS S3, AWS Step Functions, AWS RDS, AWS State Machines, AWS SageMaker, Git, Docker, CI/CD, Nginx
+            </li>
+
+            <li className="w-full max-w-4xl">
+              <strong className="font-bold text-blue-900 mr-1">Frontend:</strong>
+              React, JavaScript, TypeScript, HTML, CSS, Tailwind, Bootstrap
+            </li>
+
+            <li className="w-full max-w-4xl">
+              <strong className="font-bold text-blue-900 mr-1">Data, Machine Learning, and AI:</strong>
+              System Design, Reinforcement Learning, NLP (Transformers, HuggingFace), Statistical Analysis, AWS SageMaker, ML Pipelines
+            </li>
+
+            <li className="w-full max-w-4xl">
+              <strong className="font-bold text-blue-900 mr-1">DevOps, Monitoring and Deployment:</strong>
+              AWS EC2, GitHub Actions, CloudWatch, Secrets Manager, RDS Snapshots, Docker, Production Monitoring & Logging
+            </li>
+
+            <li className="w-full max-w-4xl">
+              <strong className="font-bold text-blue-900 mr-1">Misc:</strong>
+              Technical Writing, Product Design, Developer Mentoring, Cross-Team Collaboration
+            </li>
+          </ul>
+
+          <div className="mt-12 grid w-full max-w-md gap-4">
+            <Link
               href="/contact"
-              className="rounded-2xl px-6 py-3 text-base font-semibold shadow-sm border bg-black text-white hover:shadow-md transition"
+              className="inline-flex items-center justify-center rounded-2xl border bg-blue-600 px-6 py-3 text-base font-semibold text-white shadow-sm transition hover:bg-blue-700"
+              aria-label="Contact Kaushik"
             >
               Contact Me
-            </a>
+            </Link>
           </div>
         </section>
       </main>
