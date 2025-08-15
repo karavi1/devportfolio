@@ -65,13 +65,14 @@ export default function Home(): JSX.Element {
           </ul>
 
           <div className="mt-12 grid w-full max-w-md gap-4">
-            <Link
+            {/* <Link
               href="/contact"
               className="inline-flex items-center justify-center rounded-2xl border bg-blue-600 px-6 py-3 text-base font-semibold text-white shadow-sm transition hover:bg-blue-700"
               aria-label="Contact Kaushik"
             >
               Contact Me
-            </Link>
+            </Link> */}
+            Contact me at kaush.ravi@gmail.com!
           </div>
         </section>
       </main>

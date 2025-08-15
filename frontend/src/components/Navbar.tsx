@@ -23,11 +23,11 @@ export default function Navbar() {
             </button>
           </Link>
 
-          <Link href="/tools">
+          {/* <Link href="/tools">
             <button className="bg-blue-600 text-white font-medium px-3 py-1.5 rounded hover:bg-blue-700 transition">
               AI Tools
             </button>
-          </Link>
+          </Link> */}
         </div>
       </div>
     </nav>

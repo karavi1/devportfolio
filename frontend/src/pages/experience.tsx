@@ -7,7 +7,7 @@ type ExperienceCardProps = {
   company: string;
   location?: string;
   dates: string;
-  pills?: string[];   // now rendered inline as comma-separated “Key Learnings”
+  pills?: string[];
   bullets?: string[];
 };
 

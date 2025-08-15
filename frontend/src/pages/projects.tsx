@@ -10,7 +10,6 @@ type ProjectCardProps = {
   links?: LinkItem[];
 };
 
-
 function ProjectCard({ title, blurb, points = [], links = [] }: ProjectCardProps): JSX.Element {
   return (
     <article className="group rounded-2xl border p-6 transition hover:shadow-md">
