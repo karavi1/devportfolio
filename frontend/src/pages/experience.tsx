@@ -11,7 +11,7 @@ type ExperienceCardProps = {
   bullets?: string[];
 };
 
-function Bullet({ children }: { children: ReactNode }): JSX.Element {
+function Bullet({ children }: { children: ReactNode }) {
   return <li className="pl-2 leading-relaxed text-slate-700">{children}</li>;
 }
 

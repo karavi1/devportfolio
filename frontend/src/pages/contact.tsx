@@ -2,7 +2,7 @@ import Head from "next/head";
 import Navbar from "@/components/Navbar";
 import { useState } from "react";
 
-export default function Contact(): JSX.Element {
+export default function Contact() {
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [message, setMessage] = useState<string>("");
 
