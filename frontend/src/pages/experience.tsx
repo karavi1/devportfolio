@@ -22,7 +22,7 @@ function ExperienceCard({
   dates,
   pills = [],
   bullets = [],
-}: ExperienceCardProps): JSX.Element {
+}: ExperienceCardProps) {
   return (
     <article className="rounded-2xl border border-slate-200 bg-white p-6 transition hover:shadow-md">
       <header className="flex flex-wrap items-baseline justify-between gap-2">
@@ -53,7 +53,7 @@ function ExperienceCard({
   );
 }
 
-export default function Experience(): JSX.Element {
+export default function Experience() {
   return (
     <>
       <Head>

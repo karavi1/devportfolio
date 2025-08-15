@@ -42,7 +42,7 @@ function ProjectCard({ title, blurb, points = [], links = [] }: ProjectCardProps
   );
 }
 
-export default function Projects(): JSX.Element {
+export default function Projects() {
   return (
     <>
       <Head>
