@@ -78,7 +78,26 @@ erDiagram
   }
 `} />
 
-      <h2 className="mt-8">Request Flow (Create Workout)</h2>
+      <h2 className="mt-8">Sequence Diagrams </h2>
+
+      <h3 className="mt-8">Create Auth User</h3>
+      <Mermaid chart={`
+sequenceDiagram
+  participant U as User
+  participant FE as React
+  participant BE as FastAPI
+  participant DB as Postgres
+
+  U->>FE: Submit user creation form
+  FE->>BE: POST /api/users
+  BE->>DB: INSERT user
+  DB-->>BE: IDs
+  BE-->>FE: 201 Created
+  FE-->>U: Success + redirect to hub with user information!
+`} />
+
+
+      <h3 className="mt-8">Create Workout</h3>
       <Mermaid chart={`
 sequenceDiagram
   participant U as User
@@ -88,6 +107,28 @@ sequenceDiagram
 
   U->>FE: Submit workout form
   FE->>BE: POST /api/workouts
+  BE->>DB: INSERT workout + sets
+  DB-->>BE: IDs
+  BE-->>FE: 201 Created
+  FE-->>U: Success + redirect
+`} />
+
+      <h3 className="mt-8">Update Workout</h3>
+      <Mermaid chart={`
+sequenceDiagram
+  participant U as User
+  participant FE as React
+  participant BE as FastAPI
+  participant DB as Postgres
+
+  U->>FE: Dropdown Workouts
+  FE->>BE: GET /api/workouts/{workout_id}
+  BE->>DB: FETCH workout
+  DB->>BE: workout struct
+  BE->>FE: 200 + workout struct
+  FE->>U: Success + workout selection
+  U->>FE: Submit Update workout form
+  FE->>BE: PATCH /api/workouts/{workout_id}
   BE->>DB: INSERT workout + sets
   DB-->>BE: IDs
   BE-->>FE: 201 Created
