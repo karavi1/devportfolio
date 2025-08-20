@@ -1,0 +1,45 @@
+---
+title: "Triance Architecture"
+subtitle: "Context, data model, and hot paths"
+---
+
+## System Context
+
+<Mermaid chart={`
+flowchart LR
+  user((User)) -->|HTTPS| fe[Next.js (triance.app)]
+  fe --> api[FastAPI (EC2)]
+  api --> rds[(Amazon RDS Postgres)]
+  api --> cw[CloudWatch Logs/Metrics]
+`} />
+
+## ER Model
+
+<Mermaid chart={`
+erDiagram
+  USERS ||--o{ WORKOUTS : owns
+  WORKOUTS ||--|{ LOGGED_EXERCISES : has
+  EXERCISES ||--o{ LOGGED_EXERCISES : referenced_by
+
+  USERS { UUID id PK; string username; string email }
+  WORKOUTS { UUID id PK; enum workout_type; datetime created_at; UUID user_id FK }
+  EXERCISES { UUID id PK; string name; enum category }
+  LOGGED_EXERCISES { UUID id PK; int set_no; int reps; float weight; UUID workout_id FK; UUID exercise_id FK }
+`} />
+
+## Request Flow (Create Workout)
+
+<Mermaid chart={`
+sequenceDiagram
+  participant U as User
+  participant FE as Next.js
+  participant BE as FastAPI
+  participant DB as Postgres
+
+  U->>FE: Submit workout form
+  FE->>BE: POST /api/workouts
+  BE->>DB: INSERT workout + sets
+  DB-->>BE: IDs
+  BE-->>FE: 201 Created
+  FE-->>U: Success + redirect
+`} />

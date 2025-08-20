@@ -1,0 +1,87 @@
+import Head from 'next/head'
+import Navbar from '@/components/Navbar'
+import Mermaid from '@/components/Mermaid'
+
+export const meta = {
+  title: 'Triance Architecture',
+  subtitle: 'Context, data model, and hot paths',
+}
+
+<>
+  <Head>
+    <title>{`${meta.title} | Kaushik Ravi`}</title>
+  </Head>
+  <Navbar />
+  <main className="px-6 md:px-10 lg:px-16">
+    <section className="mx-auto max-w-4xl py-10">
+      <h1 className="text-3xl md:text-4xl font-bold">{meta.title}</h1>
+      <p className="mt-2 text-gray-600">{meta.subtitle}</p>
+
+      <article className="prose prose-slate max-w-none dark:prose-invert mt-6">
+
+        <h2>System Context</h2>
+        <Mermaid chart={`
+flowchart LR
+  user(("User")) -->|HTTPS| fe["React (triance.app)"]
+  fe --> api["FastAPI (EC2)"]
+  api --> rds["Amazon RDS (Postgres)"]
+  api --> cw["CloudWatch Logs/Metrics"]
+`} />
+
+
+        <h2 className="mt-8">ER Model</h2>
+        <Mermaid chart={`
+erDiagram
+  USERS ||--o{ WORKOUTS : owns
+  WORKOUTS ||--|{ LOGGED_EXERCISES : has
+  EXERCISES ||--o{ LOGGED_EXERCISES : referenced_by
+
+  USERS {
+    uuid id PK
+    string username
+    string email
+  }
+
+  WORKOUTS {
+    uuid id PK
+    string workout_type
+    datetime created_at
+    uuid user_id FK
+  }
+
+  EXERCISES {
+    uuid id PK
+    string name
+    string category
+  }
+
+  LOGGED_EXERCISES {
+    uuid id PK
+    int set_no
+    int reps
+    float weight
+    uuid workout_id FK
+    uuid exercise_id FK
+  }
+`} />
+
+      <h2 className="mt-8">Request Flow (Create Workout)</h2>
+      <Mermaid chart={`
+sequenceDiagram
+  participant U as User
+  participant FE as Next.js
+  participant BE as FastAPI
+  participant DB as Postgres
+
+  U->>FE: Submit workout form
+  FE->>BE: POST /api/workouts
+  BE->>DB: INSERT workout + sets
+  DB-->>BE: IDs
+  BE-->>FE: 201 Created
+  FE-->>U: Success + redirect
+`} />
+
+      </article>
+    </section>
+  </main>
+</>

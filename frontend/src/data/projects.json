@@ -20,7 +20,7 @@
     "description": "A reading and reflection app that curates and indexes learning content for retention.",
     "tech": ["Flask", "React", "LangChain", "OpenAI"],
     "github": "https://github.com/karavi1/resonote",
-    "demo": "",
+    "demo": "https://resonote-sable.vercel.app/",
     "status": "Live (dev mode)"
   }
 ]

@@ -1,29 +1,76 @@
+import Link from "next/link";
+
 type ProjectProps = {
   title: string;
   description: string;
   tech: string[];
-  github?: string;
-  demo?: string;
+  github?: string;            // external
+  demo?: string;              // external
+  architectureHref?: string;  // internal, e.g. "/projects/triance/architecture"
 };
 
-export default function ProjectCard({ title, description, tech, github, demo }: ProjectProps) {
+export default function ProjectCard({
+  title,
+  description,
+  tech,
+  github,
+  demo,
+  architectureHref,
+}: ProjectProps) {
   return (
-    <div className="border p-4 rounded shadow">
-      <h2 className="text-xl font-bold">{title}</h2>
-      <p className="text-sm text-gray-600">{description}</p>
-      <p className="text-xs text-gray-400 mt-2">Tech: {tech.join(', ')}</p>
-      <div className="mt-2 flex gap-4">
+    <article className="group rounded-2xl border p-6 transition hover:shadow-md">
+      <header>
+        <h3 className="text-lg font-semibold">{title}</h3>
+        <p className="mt-2 text-gray-700">{description}</p>
+      </header>
+
+      {/* Tech list */}
+      {tech?.length ? (
+        <ul className="mt-3 flex flex-wrap gap-2">
+          {tech.map((t) => (
+            <li
+              key={t}
+              className="rounded-full border px-2.5 py-0.5 text-xs text-gray-600"
+            >
+              {t}
+            </li>
+          ))}
+        </ul>
+      ) : null}
+
+      {/* Links */}
+      <div className="mt-4 flex flex-wrap items-center gap-4 text-sm">
         {github && (
-          <a href={github} className="text-blue-500 underline" target="_blank" rel="noreferrer">
+          <a
+            href={github}
+            target="_blank"
+            rel="noreferrer"
+            className="underline decoration-gray-400 decoration-1 underline-offset-4 hover:text-gray-900"
+          >
             GitHub
           </a>
         )}
+
         {demo && (
-          <a href={demo} className="text-green-600 underline" target="_blank" rel="noreferrer">
+          <a
+            href={demo}
+            target="_blank"
+            rel="noreferrer"
+            className="underline decoration-gray-400 decoration-1 underline-offset-4 hover:text-gray-900"
+          >
             Live
           </a>
         )}
+
+        {architectureHref && (
+          <Link
+            href={architectureHref}
+            className="underline decoration-gray-400 decoration-1 underline-offset-4 hover:text-gray-900"
+          >
+            Architecture
+          </Link>
+        )}
       </div>
-    </div>
+    </article>
   );
 }

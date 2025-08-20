@@ -1,4 +1,5 @@
 import Head from "next/head";
+import Link from "next/link";
 import Navbar from "@/components/Navbar";
 
 type LinkItem = { label: string; href: string };
@@ -15,6 +16,7 @@ function ProjectCard({ title, blurb, points = [], links = [] }: ProjectCardProps
     <article className="group rounded-2xl border p-6 transition hover:shadow-md">
       <h3 className="text-lg font-semibold mb-2">{title}</h3>
       <p className="mt-2 text-gray-700">{blurb}</p>
+
       {points.length ? (
         <ul className="mt-3 list-disc list-inside text-sm text-gray-600">
           {points.map((p, i) => (
@@ -22,20 +24,33 @@ function ProjectCard({ title, blurb, points = [], links = [] }: ProjectCardProps
           ))}
         </ul>
       ) : null}
+
       {links.length ? (
         <div className="mt-4 space-y-2">
-          {links.map((l) => (
-            <div key={l.href}>
-              <a
-                href={l.href}
-                target="_blank"
-                rel="noreferrer"
-                className="block text-sm underline"
-              >
-                {l.label}
-              </a>
-            </div>
-          ))}
+          {links.map((l) => {
+            const isExternal = /^https?:\/\//i.test(l.href);
+            return (
+              <div key={l.href}>
+                {isExternal ? (
+                  <a
+                    href={l.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="block text-sm underline underline-offset-4 decoration-gray-400 hover:text-gray-900"
+                  >
+                    {l.label}
+                  </a>
+                ) : (
+                  <Link
+                    href={l.href}
+                    className="block text-sm underline underline-offset-4 decoration-gray-400 hover:text-gray-900"
+                  >
+                    {l.label}
+                  </Link>
+                )}
+              </div>
+            );
+          })}
         </div>
       ) : null}
     </article>
@@ -52,7 +67,10 @@ export default function Projects() {
       <main className="px-6 md:px-10 lg:px-16">
         <section className="mx-auto max-w-6xl py-12">
           <h1 className="text-3xl md:text-4xl font-bold">Featured Projects</h1>
-          <p className="mt-2 text-gray-600">A few end‑to‑end builds with clear goals, lean execution, and measurable impact.</p>
+          <p className="mt-2 text-gray-600">
+            A few end-to-end builds with clear goals, lean execution, and measurable impact.
+          </p>
+
           <div className="mt-6 grid gap-6 md:grid-cols-2">
             <ProjectCard
               title="Triance"
@@ -61,11 +79,12 @@ export default function Projects() {
                 "Created and drove the vision to help individuals track and improve physical health across strength, mobility, and cardio",
                 "Designed and built the entire backend (FastAPI, SQLAlchemy, RDS) and frontend (React) from scratch, deployed to production on EC2 with Nginx",
                 "Implemented secure user authentication, customizable exercises and workout creation and logging, dynamic editing, and categorized analytics",
-                "Automated EC2-RDS snapshots and deployment, CloudWatch-based monitoring, and a operational dashboard to track deployment health and developer metrics"
+                "Automated EC2-RDS snapshots and deployment, CloudWatch-based monitoring, and an operational dashboard to track deployment health and developer metrics",
               ]}
               links={[
                 { label: "Live", href: "https://triance.app" },
                 { label: "GitHub", href: "https://github.com/karavi1/Triance" },
+                { label: "Architecture", href: "/projects/triance/architecture" }, // NEW
               ]}
             />
 
@@ -76,23 +95,27 @@ export default function Projects() {
                 "Designed a full stack application and backend pipeline to streamline content overwhelm and promote retention through procedural reading, tagging, and reflection",
                 "Built article ingestion pipelines for customizable sources such as Guardian/Reddit, with NLP-based tagging, clustering, and reflection prompting (Flask + MySQL + HuggingFace transformers).",
                 "Focused on modularizing indexing, ingestion, curation and reflection for any general use",
-                "Implemented a force-directed knowledge graph in React to visualize learning and knowledge areas"
+                "Implemented a force-directed knowledge graph in React to visualize learning and knowledge areas",
               ]}
               links={[
                 { label: "Live", href: "https://resonote-sable.vercel.app" },
                 { label: "GitHub", href: "https://github.com/karavi1/Resonote" },
+                // { label: "Architecture", href: "/projects/resonote/architecture" }, // NEW
               ]}
             />
 
             <ProjectCard
               title="MathTutor"
-              blurb="Adaptive Math Learning & Problem Generator Service "
+              blurb="Adaptive Math Learning & Problem Generator Service"
               points={[
                 "Developed a preliminary educational tool that classifies problem difficulty and generates custom practice questions using structured LLM prompts",
                 "Designed problem routing logic and classification flow for adaptive practice. Working on leveraging this into a dynamic and complete curriculum generation",
-                "Worked with another software developer/business owner to build the tool"
+                "Worked with another software developer/business owner to build the tool",
               ]}
-              links={[{ label: "GitHub", href: "https://github.com/karavi1/mathtutor" }]}
+              links={[
+                { label: "GitHub", href: "https://github.com/karavi1/mathtutor" },
+                // { label: "Architecture", href: "/projects/mathtutor/architecture" }, // NEW
+              ]}
             />
           </div>
         </section>
