@@ -29,30 +29,43 @@ flowchart LR
 `} />
 
 
-        <h2 className="mt-8">ER Model</h2>
+        <h2 className="mt-8">Data Models</h2>
         <Mermaid chart={`
 erDiagram
-  USERS ||--o{ WORKOUTS : owns
+  AUTH_USER ||--o{ WORKOUTS : owns
+  AUTH_USER ||--o{ EXERCISES : owns
   WORKOUTS ||--|{ LOGGED_EXERCISES : has
   EXERCISES ||--o{ LOGGED_EXERCISES : referenced_by
 
-  USERS {
+  AUTH_USER {
     uuid id PK
     string username
-    string email
+    optional[string] email
+    optional[string] full_name
+    optional[bool] disabled
+    string hashed_password
+    bool is_admin
   }
 
   WORKOUTS {
     uuid id PK
-    string workout_type
-    datetime created_at
     uuid user_id FK
+    datetime created_time
+    optional[string] notes
+    list[LOGGED_EXERCISES] logged_exercises
+    ExerciseGroup workout_type
+    AuthUser user
   }
 
   EXERCISES {
     uuid id PK
+    uuid user_id FK
     string name
-    string category
+    ExerciseGroup category
+    list[string] primary_muscles
+    Optional[list[string]] secondary_muscles
+    Optional[string] description
+    AuthUser user 
   }
 
   LOGGED_EXERCISES {
@@ -69,7 +82,7 @@ erDiagram
       <Mermaid chart={`
 sequenceDiagram
   participant U as User
-  participant FE as Next.js
+  participant FE as React
   participant BE as FastAPI
   participant DB as Postgres
 

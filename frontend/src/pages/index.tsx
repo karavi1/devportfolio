@@ -31,8 +31,9 @@ export default function Home() {
 
           <p className="mt-6 max-w-2xl text-base leading-relaxed text-gray-600 md:text-lg">
             I’m Kaushik Ravi — a full-stack software engineer with a strong foundation in systems design and ML infrastructure.
-            Previously SDE II at Amazon; now helping startups, teams, and business owners ship polished products end-to-end across health, education, and knowledge.
+            Previously SDE II at Amazon; now helping startups, teams, and business owners create and deliver meaningful products end-to-end across health, education, knowledge, etc.
             Available for freelance and consulting opportunities.
+
           </p>
 
           <p className="mt-4 text-gray-700">Here are some of the skills I bring to the table:</p>

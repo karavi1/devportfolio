@@ -11,6 +11,12 @@ export default function Navbar() {
             </button>
           </Link>
 
+          <Link href="/about">
+            <button className="bg-blue-600 text-white font-medium px-3 py-1.5 rounded hover:bg-blue-700 transition">
+              About Me
+            </button>
+          </Link>
+
           <Link href="/projects">
             <button className="bg-blue-600 text-white font-medium px-3 py-1.5 rounded hover:bg-blue-700 transition">
               Projects
