@@ -68,12 +68,6 @@ const AboutPage: NextPage = () => {
 
         <ul>
           <li>
-            Website:{" "}
-            <a href="https://devportfolio-rouge.vercel.app/" className="text-blue-600 hover:underline">
-              devportfolio-rouge.vercel.app
-            </a>
-          </li>
-          <li>
             GitHub:{" "}
             <a href="https://github.com/karavi1" className="text-blue-600 hover:underline">
               github.com/karavi1
