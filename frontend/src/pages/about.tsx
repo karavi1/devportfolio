@@ -62,13 +62,11 @@ const AboutPage: NextPage = () => {
         </p>
 
         <p>
-          For more information on these projects and my Amazon experience, please visit my website
-          and GitHub profile:
+          For more information on these projects and my Amazon experience, please visit my GitHub profile:
         </p>
 
         <ul>
           <li>
-            GitHub:{" "}
             <a href="https://github.com/karavi1" className="text-blue-600 hover:underline">
               github.com/karavi1
             </a>

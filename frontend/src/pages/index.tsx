@@ -6,12 +6,12 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>Kaushik Ravi | Full-Stack Developer & Freelance Consultant</title>
+        <title>Kaushik Ravi | Full-Stack Developer</title>
         <meta
           name="description"
           content="Full-stack developer and consultant specializing in FastAPI, React, cloud deployments, and ML pipelines. Available for freelance or consulting projects."
         />
-        <meta property="og:title" content="Kaushik Ravi | Full-Stack Developer & Freelance Consultant" />
+        <meta property="og:title" content="Kaushik Ravi | Full-Stack Developer" />
         <meta
           property="og:description"
           content="I provide scalable API development, data/ML pipelines, and polished web apps. Available as a freelancer or consultant for your project needs."
@@ -26,7 +26,7 @@ export default function Home() {
 
         <section className="mx-auto flex min-h-[80vh] max-w-4xl flex-col items-center justify-center px-6 text-center">
           <h1 className="text-4xl font-extrabold tracking-tight md:text-6xl">
-            Full-Stack Developer & Consultant for Your Next Project
+            Full-Stack Developer & Consultant
           </h1>
 
           <p className="mt-6 max-w-2xl text-base leading-relaxed text-gray-600 md:text-lg">
