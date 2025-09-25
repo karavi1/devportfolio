@@ -4,138 +4,272 @@ import Mermaid from '@/components/Mermaid'
 
 export const meta = {
   title: 'Triance Architecture',
-  subtitle: 'Context, data model, and hot paths',
+  // subtitle: 'System context, data model, hot paths, and minimal deployment',
 }
 
-<>
-  <Head>
-    <title>{`${meta.title} | Kaushik Ravi`}</title>
-  </Head>
-  <Navbar />
-  <main className="px-6 md:px-10 lg:px-16">
-    <section className="mx-auto max-w-4xl py-10">
-      <h1 className="text-3xl md:text-4xl font-bold">{meta.title}</h1>
-      <p className="mt-2 text-gray-600">{meta.subtitle}</p>
+<Head>
+  <title>{`${meta.title} | Kaushik Ravi`}</title>
+  <meta name="description" content="Architecture diagrams for Triance" />
+</Head>
 
-      <article className="prose prose-slate max-w-none dark:prose-invert mt-6">
+<Navbar />
 
-        <h2>System Context</h2>
-        <Mermaid chart={`
+<main className="px-6 md:px-10 lg:px-16">
+  <section className="mx-auto max-w-4xl py-10">
+    <h1 className="text-3xl md:text-4xl font-bold">{meta.title}</h1>
+    <p className="mt-2 text-gray-600">{meta.subtitle}</p>
+
+    <article className="prose prose-slate max-w-none dark:prose-invert mt-6">
+
+
+            {/* ---------------- Minimal Deployment Diagram ---------------- */}
+      <h2 className="mt-10">Tech Stack Overview</h2>
+
+      Triance is built as a full stack health and fitness tracking platform using a React frontend (deployed via Vercel/CDN for static assets) and a FastAPI backend running on EC2 behind Nginx and Gunicorn/Uvicorn for high-performance API serving. Data is persisted in an Amazon RDS MySQL database, with SQLAlchemy models and Pydantic schemas ensuring type safe data validation. Authentication and user management are powered by FastAPI Users with JWT tokens, and workout/exercise data is organized through carefully designed relational models. AWS Secrets Manager is used to securely store DB credentials and JWT secrets, while CloudWatch provides centralized logging, metrics, and alarms for production monitoring. The codebase is container-friendly, supports Alembic migrations, and is fully end to end tested with pytest.
+
+      <h2 className="mt-10">Minimal Deployment Diagram</h2>
+      <Mermaid chart={`
+flowchart LR
+  user(("User"))
+  cdn["CDN/Edge (Vercel/Static Assets)"]
+  fe["React App"]
+  lb["Nginx Reverse Proxy"]
+  app["Gunicorn/Uvicorn<br/>FastAPI on EC2"]
+  rds["Amazon RDS (MySQL)"]
+  sm["AWS Secrets Manager"]
+  cw["CloudWatch Logs/Metrics"]
+
+  user -->|HTTPS| cdn --> fe
+  fe -->|HTTPS API| lb --> app
+  app --> rds
+  app --> sm
+  app --> cw
+`} />
+      <ul className="text-sm mt-2">
+        <li><b>Nginx</b>: TLS termination, static gzip, reverse proxy to Gunicorn/Uvicorn.</li>
+        <li><b>Gunicorn/Uvicorn</b>: ASGI server for FastAPI (workers tuned to CPU/RAM).</li>
+        <li><b>RDS MySQL</b>: production DB; add backups + IAM auth if desired.</li>
+        <li><b>CloudWatch</b>: structured logs & dashboards; alarms on latency/errors.</li>
+        <li><b>Secrets Manager</b>: DB creds/JWT secrets rotated out of code/env files.</li>
+      </ul>
+
+      {/* ---------------- System Context ---------------- */}
+      <h2>System Context</h2>
+      <Mermaid chart={`
 flowchart LR
   user(("User")) -->|HTTPS| fe["React (triance.app)"]
   fe --> api["FastAPI (EC2)"]
-  api --> rds["Amazon RDS (Postgres)"]
+  api --> rds["Amazon RDS (MySQL)"]
+  api --> auth["FastAPI Users (JWT)"]
+  api --> secrets["AWS Secrets Manager"]
   api --> cw["CloudWatch Logs/Metrics"]
 `} />
 
-
-        <h2 className="mt-8">Data Models</h2>
-        <Mermaid chart={`
+      {/* ---------------- Data Model (ERD) ---------------- */}
+      <h2 className="mt-8">Data Model (ERD)</h2>
+      <Mermaid chart={`
 erDiagram
-  AUTH_USER ||--o{ WORKOUTS : owns
-  AUTH_USER ||--o{ EXERCISES : owns
-  WORKOUTS ||--|{ LOGGED_EXERCISES : has
-  EXERCISES ||--o{ LOGGED_EXERCISES : referenced_by
+  AUTH_USER ||--o{ WORKOUT : owns
+  AUTH_USER ||--o{ EXERCISE : owns
+  WORKOUT ||--|{ LOGGED_EXERCISE : has
+  LOGGED_EXERCISE ||--|{ LOGGED_EXERCISE_SET : has
+  EXERCISE ||--o{ LOGGED_EXERCISE : referenced_by
 
   AUTH_USER {
     uuid id PK
     string username
-    optional[string] email
-    optional[string] full_name
-    optional[bool] disabled
+    string email
     string hashed_password
     bool is_admin
+    bool disabled
   }
 
-  WORKOUTS {
+  WORKOUT {
     uuid id PK
     uuid user_id FK
+    string workout_type  "ENUM: Push|Pull|Quads|Hams|Cardio|Mobility"
+    string notes
     datetime created_time
-    optional[string] notes
-    list[LOGGED_EXERCISES] logged_exercises
-    ExerciseGroup workout_type
-    AuthUser user
   }
 
-  EXERCISES {
+  EXERCISE {
     uuid id PK
     uuid user_id FK
     string name
-    ExerciseGroup category
-    list[string] primary_muscles
-    Optional[list[string]] secondary_muscles
-    Optional[string] description
-    AuthUser user 
+    string category     "ENUM: Push|Pull|Quads|Hams|Cardio|Mobility"
+    string[] primary_muscles
+    string[] secondary_muscles
+    string description
   }
 
-  LOGGED_EXERCISES {
+  LOGGED_EXERCISE {
     uuid id PK
-    int set_no
-    int reps
-    float weight
     uuid workout_id FK
     uuid exercise_id FK
   }
+
+  LOGGED_EXERCISE_SET {
+    uuid id PK
+    uuid logged_exercise_id FK
+    int set_number
+    int reps
+    float weight
+  }
 `} />
 
-      <h2 className="mt-8">Sequence Diagrams </h2>
+      <div className="text-sm mt-2">
+        Tip: add a DB unique constraint on <code>(logged_exercise_id, set_number)</code> to enforce set ordering per exercise.
+      </div>
 
-      <h3 className="mt-8">Create Auth User</h3>
+      {/* ---------------- Sequence: Create Auth User ---------------- */}
+      <h2 className="mt-8">Sequence Diagrams</h2>
+      <h3>Create Auth User</h3>
       <Mermaid chart={`
 sequenceDiagram
-  participant U as User
-  participant FE as React
-  participant BE as FastAPI
-  participant DB as Postgres
+  autonumber
+  actor U as User
+  participant FE as React (FE)
+  participant API as FastAPI (API)
+  participant DB as MySQL (RDS)
 
-  U->>FE: Submit user creation form
-  FE->>BE: POST /api/users
-  BE->>DB: INSERT user
-  DB-->>BE: IDs
-  BE-->>FE: 201 Created
-  FE-->>U: Success + redirect to hub with user information!
+  U->>FE: Fill "Sign up" form (username, email, password)
+  FE->>API: POST /api/users {username, email, password}
+  note right of API: Validate payload, check uniqueness, hash password (bcrypt/argon2)
+  API->>DB: INSERT auth_user (username, email, hashed_password, is_admin=false)
+  DB-->>API: row_id
+  API-->>FE: 201 Created {id, username, email}
+  FE-->>U: Success • navigate to dashboard
 `} />
 
+      {/* ---------------- Sequence: Login + Persist ---------------- */}
+      <h3 className="mt-8">Login + Persisted Session on Refresh</h3>
+      <Mermaid chart={`
+sequenceDiagram
+  autonumber
+  actor U as User
+  participant FE as React (FE)
+  participant API as FastAPI (API)
+  participant DB as MySQL (RDS)
 
+  U->>FE: Submit login (username, password)
+  FE->>API: POST /api/auth/login {username, password}
+  API->>DB: SELECT user by username
+  DB-->>API: {id, hashed_password, ...}
+  API->>API: Verify password
+  alt valid credentials
+    API-->>FE: 200 {access_token, token_type="bearer"} + HttpOnly refresh cookie
+    FE->>FE: Store access token in memory (state)
+  else invalid credentials
+    API-->>FE: 401 Unauthorized {detail}
+    FE-->>U: Error message
+  end
+
+  rect rgba(200, 200, 255, .15)
+  note over FE,API: On page refresh / app boot
+  FE->>FE: Access token likely missing/expired
+  alt need refresh
+    FE->>API: POST /api/auth/refresh (uses HttpOnly cookie)
+    API->>API: Validate refresh token
+    API-->>FE: 200 {access_token}
+    FE->>FE: Set new access token in memory
+  else token valid
+    FE->>API: GET /api/me (Authorization: Bearer ...)
+    API-->>FE: 200 {user profile}
+  end
+  end
+`} />
+
+      {/* ---------------- Sequence: Create Workout ---------------- */}
       <h3 className="mt-8">Create Workout</h3>
       <Mermaid chart={`
 sequenceDiagram
-  participant U as User
-  participant FE as React
-  participant BE as FastAPI
-  participant DB as Postgres
+  autonumber
+  actor U as User
+  participant FE as React (FE)
+  participant API as FastAPI (API)
+  participant DB as MySQL (RDS)
 
-  U->>FE: Submit workout form
-  FE->>BE: POST /api/workouts
-  BE->>DB: INSERT workout + sets
-  DB-->>BE: IDs
-  BE-->>FE: 201 Created
-  FE-->>U: Success + redirect
+  U->>FE: Fill "Create Workout" (type, notes, exercises+sets)
+  FE->>API: POST /api/workouts {workout_type, notes, items:[{exercise_id|name, sets:[{set_number, reps, weight}]}]}
+  note right of API: Begin transaction
+  API->>DB: INSERT workout (user_id, type, notes)
+  DB-->>API: workout_id
+
+  loop each item
+    alt item has exercise_id
+      API->>DB: SELECT exercise by id (validate ownership/visibility)
+    else item has exercise name
+      API->>DB: SELECT exercise by (user_id, name) or global
+    end
+    API->>DB: INSERT logged_exercise (workout_id, exercise_id)
+    DB-->>API: logged_exercise_id
+
+    loop each set
+      API->>DB: INSERT logged_exercise_set (logged_exercise_id, set_number, reps, weight)
+    end
+  end
+
+  alt success
+    API->>API: Commit
+    API-->>FE: 201 Created {workout_id, summary}
+    FE-->>U: Success • UI update
+  else failure
+    API->>API: Rollback
+    API-->>FE: 400/422 with details
+  end
 `} />
 
+      {/* ---------------- Sequence: Update Workout ---------------- */}
       <h3 className="mt-8">Update Workout</h3>
       <Mermaid chart={`
 sequenceDiagram
-  participant U as User
-  participant FE as React
-  participant BE as FastAPI
-  participant DB as Postgres
+  autonumber
+  actor U as User
+  participant FE as React (FE)
+  participant API as FastAPI (API)
+  participant DB as MySQL (RDS)
 
-  U->>FE: Dropdown Workouts
-  FE->>BE: GET /api/workouts/{workout_id}
-  BE->>DB: FETCH workout
-  DB->>BE: workout struct
-  BE->>FE: 200 + workout struct
-  FE->>U: Success + workout selection
-  U->>FE: Submit Update workout form
-  FE->>BE: PATCH /api/workouts/{workout_id}
-  BE->>DB: INSERT workout + sets
-  DB-->>BE: IDs
-  BE-->>FE: 201 Created
-  FE-->>U: Success + redirect
+  U->>FE: Open an existing workout
+  FE->>API: GET /api/workouts/{id}
+  API->>DB: SELECT workout + nested exercises + sets
+  DB-->>API: workout graph
+  API-->>FE: 200 (DTO)
+  FE-->>U: Render editor (add/remove sets, change weights)
+
+  U->>FE: Submit changes
+  FE->>API: PATCH /api/workouts/{id} {notes?, items:[{logged_exercise_id?, exercise_id?, op, sets:[{id?, set_number, reps, weight, op}]}]}
+  note right of API: Begin transaction
+  API->>DB: UPDATE workout (notes?, type?)
+  loop items
+    alt op == "add_exercise"
+      API->>DB: INSERT logged_exercise (...)
+    else op == "remove_exercise"
+      API->>DB: DELETE logged_exercise (cascade sets)
+    else op == "update_exercise"
+      API->>DB: UPDATE logged_exercise (maybe exercise_id)
+    end
+
+    loop sets
+      alt op == "add_set"
+        API->>DB: INSERT logged_exercise_set (...)
+      else op == "remove_set"
+        API->>DB: DELETE logged_exercise_set WHERE id=...
+      else op == "update_set"
+        API->>DB: UPDATE logged_exercise_set SET reps/weight/set_number
+      end
+    end
+  end
+
+  alt success
+    API->>API: Commit
+    API-->>FE: 200 Updated {workout_id, summary}
+    FE-->>U: Success toast + refreshed view
+  else failure
+    API->>API: Rollback
+    API-->>FE: 400/409/422 with errors
+  end
 `} />
 
-      </article>
-    </section>
-  </main>
-</>
+    </article>
+  </section>
+</main>

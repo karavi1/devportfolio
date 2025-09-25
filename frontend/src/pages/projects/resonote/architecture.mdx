@@ -1,0 +1,241 @@
+import Head from 'next/head'
+import Navbar from '@/components/Navbar'
+import Mermaid from '@/components/Mermaid'
+
+export const meta = {
+  title: 'Resonote Architecture',
+  subtitle: 'System context, data model, core flows, and minimal deployment',
+}
+
+<Head>
+  <title>{`${meta.title} | Kaushik Ravi`}</title>
+  <meta name="description" content="Architecture diagrams for Resonote" />
+</Head>
+
+<Navbar />
+
+<main className="px-6 md:px-10 lg:px-16">
+  <section className="mx-auto max-w-4xl py-10">
+    <h1 className="text-3xl md:text-4xl font-bold">{meta.title}</h1>
+    <p className="mt-2 text-gray-600">{meta.subtitle}</p>
+
+    <article className="prose prose-slate max-w-none dark:prose-invert mt-6">
+
+      {/* ---------------- System Context ---------------- */}
+      <h2>System Context</h2>
+      <Mermaid chart={`
+flowchart LR
+  user(("User")) -->|HTTPS| fe["React (Vite) Frontend"]
+  fe --> api["Flask API (EC2)"]
+  api --> rds["Amazon RDS (MySQL)"]
+  api --> sm["AWS Secrets Manager"]
+  api --> cw["CloudWatch Logs/Metrics"]
+  subgraph Ingestion
+    fetch["Fetchers (Substack/Guardian/Reddit)"]
+    curate["Curation Pipeline"]
+    indexer["Indexing Service"]
+  end
+  fetch --> curate --> indexer --> api
+`} />
+
+      <div className="text-sm mt-2">
+        Resonote focuses on <b>ingestion → curation → indexing → reflection</b>. It’s online-first (users open source links directly at the original site); content is organized, not mirrored.
+      </div>
+
+      {/* ---------------- Data Model (ERD) ---------------- */}
+      <h2 className="mt-8">Data Model (ERD)</h2>
+      <Mermaid chart={`
+erDiagram
+  USER ||--o{ REFLECTION : writes
+  USER ||--o{ CURATED_ARTICLE : curates
+  CURATED_ARTICLE ||--o{ REFLECTION : has
+  CURATED_ARTICLE ||--o{ ARTICLE_TAG : labeled_by
+  TAG ||--o{ ARTICLE_TAG : joins
+
+  USER {
+    uuid id PK
+    string username
+    string email
+    bool is_admin
+  }
+
+  CURATED_ARTICLE {
+    uuid id PK
+    uuid user_id FK
+    string source          "e.g., Substack | Guardian | Reddit"
+    string title
+    string url
+    string author
+    int estimated_read_mins
+    bool is_read
+    bool is_favorite
+    datetime published_at
+    datetime curated_at
+  }
+
+  REFLECTION {
+    uuid id PK
+    uuid user_id FK
+    uuid article_id FK
+    string content
+    datetime created_at
+    datetime updated_at
+  }
+
+  TAG {
+    uuid id PK
+    string name
+  }
+
+  ARTICLE_TAG {
+    uuid article_id FK
+    uuid tag_id FK
+  }
+`} />
+
+      <div className="text-sm mt-2">
+        Suggested constraints: <code>unique(user_id, url)</code> on <b>CURATED_ARTICLE</b>, and <code>unique(article_id, tag_id)</code> on <b>ARTICLE_TAG</b>.
+      </div>
+
+      {/* ---------------- Sequence Diagrams ---------------- */}
+      <h2 className="mt-8">Sequence Diagrams</h2>
+
+      {/* Ingestion + Curation + Indexing */}
+      <h3>Ingestion → Curation → Indexing</h3>
+      <Mermaid chart={`
+sequenceDiagram
+  autonumber
+  participant SCH as Scheduler (cron)
+  participant F as Fetchers (Substack/Guardian/Reddit)
+  participant C as Curation Pipeline
+  participant I as Indexing Service
+  participant API as Flask API
+  participant DB as MySQL (RDS)
+
+  SCH->>F: Trigger fetch (per source)
+  loop sources
+    F->>F: Pull latest feeds/posts
+    F-->>C: Raw items (title, url, author, published_at, content/summary)
+    C->>C: Deduplicate, quality checks, normalize fields
+    C-->>I: Curated items
+    I->>DB: Upsert CURATED_ARTICLE (+ derived tags)
+    I->>DB: Upsert TAG and ARTICLE_TAG relations
+  end
+  DB-->>API: Indexed catalog available
+`} />
+
+      {/* List & Filter Articles */}
+      <h3 className="mt-8">List & Filter Articles (Unread / Favorite / By Source or Tag)</h3>
+      <Mermaid chart={`
+sequenceDiagram
+  autonumber
+  actor U as User
+  participant FE as React (Vite)
+  participant API as Flask API
+  participant DB as MySQL (RDS)
+
+  U->>FE: Open "Articles" page (filters: unread, favorites, source, tag)
+  FE->>API: GET /api/articles?read=false&favorite?=&source?=&tag?=
+  API->>DB: SELECT curated_article JOIN tags (with filters, pagination)
+  DB-->>API: Articles (DTOs)
+  API-->>FE: 200 {items, pagination}
+  FE-->>U: Render vertical cards grouped by primary tag
+`} />
+
+      {/* Mark as Read */}
+      <h3 className="mt-8">Mark as Read</h3>
+      <Mermaid chart={`
+sequenceDiagram
+  autonumber
+  actor U as User
+  participant FE as React (Vite)
+  participant API as Flask API
+  participant DB as MySQL (RDS)
+
+  U->>FE: Click "Mark as Read"
+  FE->>API: PATCH /api/articles/{id}/read {is_read: true}
+  API->>DB: UPDATE curated_article SET is_read=true
+  DB-->>API: OK
+  API-->>FE: 200 {id, is_read:true}
+  FE-->>U: Update card state in place (optimistic or on success)
+`} />
+
+      {/* Toggle Favorite */}
+      <h3 className="mt-8">Toggle Favorite</h3>
+      <Mermaid chart={`
+sequenceDiagram
+  autonumber
+  actor U as User
+  participant FE as React (Vite)
+  participant API as Flask API
+  participant DB as MySQL (RDS)
+
+  U->>FE: Click "Favorite"
+  FE->>API: PATCH /api/articles/{id}/favorite {is_favorite: !current}
+  API->>DB: UPDATE curated_article SET is_favorite = value
+  DB-->>API: OK
+  API-->>FE: 200 {id, is_favorite:value}
+  FE-->>U: Toggle favorite icon
+`} />
+
+      {/* Add or Edit Reflection */}
+      <h3 className="mt-8">Add / Edit Reflection</h3>
+      <Mermaid chart={`
+sequenceDiagram
+  autonumber
+  actor U as User
+  participant FE as React (Vite)
+  participant API as Flask API
+  participant DB as MySQL (RDS)
+
+  U->>FE: Click "Edit Reflection"
+  alt create new
+    FE->>API: POST /api/reflections {article_id, content}
+    API->>DB: INSERT reflection (user_id, article_id, content)
+    DB-->>API: reflection_id
+    API-->>FE: 201 {id, content, timestamps}
+    FE-->>U: Render reflection text
+  else update existing
+    FE->>API: PUT /api/reflections/{id} {content}
+    API->>DB: UPDATE reflection SET content=?, updated_at=NOW()
+    DB-->>API: OK
+    API-->>FE: 200 {id, content, updated_at}
+    FE-->>U: Update reflection text
+  end
+`} />
+
+      {/* ---------------- Minimal Deployment Diagram ---------------- */}
+      <h2 className="mt-10">Minimal Deployment Diagram</h2>
+      <Mermaid chart={`
+flowchart LR
+  user(("User"))
+  cdn["CDN/Edge (Vercel/Static Assets)"]
+  fe["React (Vite) App"]
+  lb["Nginx Reverse Proxy"]
+  app["Gunicorn<br/>Flask on EC2"]
+  rds["Amazon RDS (MySQL)"]
+  sm["AWS Secrets Manager"]
+  cw["CloudWatch Logs/Metrics"]
+
+  user -->|HTTPS| cdn --> fe
+  fe -->|HTTPS API| lb --> app
+  app --> rds
+  app --> sm
+  app --> cw
+`} />
+
+      <ul className="text-sm mt-2">
+        <li><b>Nginx</b>: TLS termination, static gzip, reverse proxy to Gunicorn (Flask).</li>
+        <li><b>Gunicorn</b>: WSGI server for Flask; tune workers/threads for EC2 size.</li>
+        <li><b>RDS MySQL</b>: primary store; enable automated backups and snapshots.</li>
+        <li><b>CloudWatch</b>: app & ingestion logs; dashboards + alarms on errors/latency.</li>
+        <li><b>Secrets Manager</b>: DB creds and API keys (e.g., for sources) rotated out of code.</li>
+      </ul>
+
+      <div className="text-sm mt-4">
+        Ethics note: keep ingestion lawful—respect robots.txt, ToS, and fair use. Resonote links out to originals; avoid mirroring full content.
+      </div>
+
+    </article>
+  </section>
+</main>

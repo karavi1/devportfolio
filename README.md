@@ -7,3 +7,11 @@ Built with:
 - Next.js + Tailwind CSS (frontend)
 - FastAPI + Ollama/Mistral (backend)
 - Open-source AI tools for SEO, blog generation, and more
+
+
+Development
+
+```
+cd frontend
+npm run dev
+```

@@ -84,7 +84,7 @@ export default function Projects() {
               links={[
                 { label: "Live", href: "https://triance.app" },
                 { label: "GitHub", href: "https://github.com/karavi1/Triance" },
-                { label: "Architecture", href: "/projects/triance/architecture" }, // NEW
+                { label: "Architecture", href: "/projects/triance/architecture" },
               ]}
             />
 
@@ -100,7 +100,7 @@ export default function Projects() {
               links={[
                 { label: "Live", href: "https://resonote-sable.vercel.app" },
                 { label: "GitHub", href: "https://github.com/karavi1/Resonote" },
-                // { label: "Architecture", href: "/projects/resonote/architecture" }, // NEW
+                { label: "Architecture", href: "/projects/resonote/architecture" },
               ]}
             />
 
@@ -114,7 +114,7 @@ export default function Projects() {
               ]}
               links={[
                 { label: "GitHub", href: "https://github.com/karavi1/mathtutor" },
-                // { label: "Architecture", href: "/projects/mathtutor/architecture" }, // NEW
+                { label: "Architecture", href: "/projects/mathtutor/architecture" },
               ]}
             />
           </div>
