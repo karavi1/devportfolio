@@ -4,7 +4,7 @@ import Mermaid from '@/components/Mermaid'
 
 export const meta = {
   title: 'Resonote Architecture',
-  subtitle: 'System context, data model, core flows, and minimal deployment',
+  subtitle: '',
 }
 
 <Head>
@@ -22,7 +22,7 @@ export const meta = {
     <article className="prose prose-slate max-w-none dark:prose-invert mt-6">
 
       {/* ---------------- System Context ---------------- */}
-      <h2>System Context</h2>
+      <h2>System Design</h2>
       <Mermaid chart={`
 flowchart LR
   user(("User")) -->|HTTPS| fe["React (Vite) Frontend"]
@@ -39,63 +39,49 @@ flowchart LR
 `} />
 
       <div className="text-sm mt-2">
-        Resonote focuses on <b>ingestion → curation → indexing → reflection</b>. It’s online-first (users open source links directly at the original site); content is organized, not mirrored.
+        Resonote focuses on 4 modular components: <b>ingestion → curation → indexing → reflection</b>. It’s online-first, so users open source links directly at the original site. 
       </div>
+
 
       {/* ---------------- Data Model (ERD) ---------------- */}
       <h2 className="mt-8">Data Model (ERD)</h2>
       <Mermaid chart={`
 erDiagram
-  USER ||--o{ REFLECTION : writes
-  USER ||--o{ CURATED_ARTICLE : curates
-  CURATED_ARTICLE ||--o{ REFLECTION : has
-  CURATED_ARTICLE ||--o{ ARTICLE_TAG : labeled_by
-  TAG ||--o{ ARTICLE_TAG : joins
-
-  USER {
-    uuid id PK
-    string username
-    string email
-    bool is_admin
-  }
+  CURATED_ARTICLE ||--|| REFLECTION : has
+  CURATED_ARTICLE ||--o{ ARTICLE_TAG_ASSOCIATION : labeled_by
+  TAG ||--o{ ARTICLE_TAG_ASSOCIATION : joins
 
   CURATED_ARTICLE {
-    uuid id PK
-    uuid user_id FK
-    string source          "e.g., Substack | Guardian | Reddit"
+    int id PK
     string title
-    string url
-    string author
-    int estimated_read_mins
-    bool is_read
-    bool is_favorite
-    datetime published_at
-    datetime curated_at
+    string author "nullable"
+    text url
+    string url_hash "unique"
+    string source
+    int estimated_reading_time_min
+    string reading_status "default: unread"
+    datetime timestamp "UTC now"
+    bool favorite "default: false"
   }
 
   REFLECTION {
-    uuid id PK
-    uuid user_id FK
-    uuid article_id FK
-    string content
+    int id PK
+    int article_id FK "unique (1:1 with article)"
+    text content
     datetime created_at
     datetime updated_at
   }
 
   TAG {
-    uuid id PK
-    string name
+    int id PK
+    string name "unique"
   }
 
-  ARTICLE_TAG {
-    uuid article_id FK
-    uuid tag_id FK
+  ARTICLE_TAG_ASSOCIATION {
+    int article_id PK, FK
+    int tag_id PK, FK
   }
 `} />
-
-      <div className="text-sm mt-2">
-        Suggested constraints: <code>unique(user_id, url)</code> on <b>CURATED_ARTICLE</b>, and <code>unique(article_id, tag_id)</code> on <b>ARTICLE_TAG</b>.
-      </div>
 
       {/* ---------------- Sequence Diagrams ---------------- */}
       <h2 className="mt-8">Sequence Diagrams</h2>
@@ -204,6 +190,71 @@ sequenceDiagram
   end
 `} />
 
+      {/* ---------------- Knowledge Graph ---------------- */}
+      <h2 className="mt-8">Knowledge Graph Dashboard</h2>
+
+      <h3>Knowledge Graph — Load & Build</h3>
+      <Mermaid chart={`
+sequenceDiagram
+  autonumber
+  actor U as User
+  participant FE as React (Vite) Dashboard
+  participant API as Flask API
+  participant DB as MySQL (RDS)
+
+  U->>FE: Open Dashboard
+  FE->>API: GET /api/articles
+  API->>DB: SELECT curated_articles LEFT JOIN tags
+  DB-->>API: rows (articles with tags)
+  API-->>FE: 200 JSON (articles[])
+  FE->>FE: Build nodes (articles, tags) and links
+  Note over FE: Article nodes: blue<br/>Tag nodes: purple
+  FE->>FE: Compute tag frequencies & summary stats
+  FE-->>U: Render All + Read-only graphs and stats
+`} />
+
+      <h3 className="mt-8">Knowledge Graph — Force Layout & Render</h3>
+      <Mermaid chart={`
+sequenceDiagram
+  autonumber
+  participant FE as React (Vite)
+  participant D3 as D3 Force Simulation
+  participant CAN as Canvas (react-force-graph-2d)
+
+  FE->>D3: Init forces (charge, link.id, collide)
+  FE->>D3: Add X/Y forces (stronger for tag nodes)
+  D3-->>FE: Tick updates (x,y)
+  FE->>CAN: Draw nodes and links per tick
+  loop until cooldownTicks
+    D3-->>FE: Tick...
+    FE->>CAN: Repaint
+  end
+  D3-->>FE: Engine stop
+  FE->>FE: zoomToFit(400)
+  FE-->>CAN: Final settled layout
+`} />
+
+      <h3 className="mt-8">Knowledge Graph — User Interactions</h3>
+      <Mermaid chart={`
+sequenceDiagram
+  autonumber
+  actor U as User
+  participant FE as React (Vite)
+  participant CAN as Canvas
+
+  U->>FE: Click "Fit to View"
+  FE->>CAN: zoomToFit(400)
+  CAN-->>U: View centers on graph
+
+  U->>CAN: Hover node
+  CAN-->>U: Tooltip label (Article title / Tag)
+
+  U->>FE: Switch to "Read Articles Only"
+  FE->>FE: Filter articles where reading_status = read
+  FE->>CAN: Re-render read-only graph
+  CAN-->>U: Updated layout and stats
+`} />
+
       {/* ---------------- Minimal Deployment Diagram ---------------- */}
       <h2 className="mt-10">Minimal Deployment Diagram</h2>
       <Mermaid chart={`
@@ -231,10 +282,6 @@ flowchart LR
         <li><b>CloudWatch</b>: app & ingestion logs; dashboards + alarms on errors/latency.</li>
         <li><b>Secrets Manager</b>: DB creds and API keys (e.g., for sources) rotated out of code.</li>
       </ul>
-
-      <div className="text-sm mt-4">
-        Ethics note: keep ingestion lawful—respect robots.txt, ToS, and fair use. Resonote links out to originals; avoid mirroring full content.
-      </div>
 
     </article>
   </section>

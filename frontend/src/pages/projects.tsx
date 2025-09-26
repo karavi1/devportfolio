@@ -74,7 +74,7 @@ export default function Projects() {
           <div className="mt-6 grid gap-6 md:grid-cols-2">
             <ProjectCard
               title="Triance"
-              blurb="Health & fitness tracking platform covering strength, mobility, and cardio."
+              blurb="Tracking platform balancing 3 pillars of fitness: strength, mobility, and cardio."
               points={[
                 "Created and drove the vision to help individuals track and improve physical health across strength, mobility, and cardio",
                 "Designed and built the entire backend (FastAPI, SQLAlchemy, RDS) and frontend (React) from scratch, deployed to production on EC2 with Nginx",

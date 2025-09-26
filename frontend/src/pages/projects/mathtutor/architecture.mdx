@@ -4,7 +4,7 @@ import Mermaid from '@/components/Mermaid'
 
 export const meta = {
   title: 'MathTutor Architecture',
-  subtitle: 'System context, data model, core flows, and minimal deployment',
+  // subtitle: 'System context, data model, core flows, and minimal deployment',
 }
 
 <Head>
@@ -22,7 +22,7 @@ export const meta = {
     <article className="prose prose-slate max-w-none dark:prose-invert mt-6">
 
       {/* ---------------- System Context ---------------- */}
-      <h2>System Context</h2>
+      <h2>System Design</h2>
       <Mermaid chart={`
 flowchart LR
   user(("Learner")) -->|HTTPS| fe["React Frontend (optional)"]
@@ -34,14 +34,13 @@ flowchart LR
   %% LLM providers (pluggable)
   subgraph "Model Layer"
     llm_api["LLM Provider API"]
-    oss_llm["Self-Hosted LLM (optional)"]
   end
 
   api --> llm_api
   api --> oss_llm
 
   %% Optional retrieval for worked examples / formulas
-  subgraph "Retrieval (Optional)"
+  subgraph "Retrieval (Still to come)"
     vdb["Vector DB"]
     corpus["Example/Formula Corpus"]
   end
@@ -51,7 +50,7 @@ flowchart LR
 `} />
 
       <div className="text-sm mt-2">
-        The current repo is a POC centered on <b>problem suggestion</b> using an <b>obstacle</b> chosen by the user, a <b>structured prompt</b>, and <b>difficulty classification</b>. The API layer can stay thin while the orchestration and schemas live server-side.
+        The current repo is a POC centered on <b>problem suggestion</b> using an <b>obstacle</b> chosen by the user, a <b>structured prompt</b>, and <b>difficulty classification</b>. The API layer will stay thin while the orchestration and schemas live server-side.
       </div>
 
       {/* ---------------- Data Model (ERD) ---------------- */}
@@ -142,10 +141,6 @@ erDiagram
   }
 `} />
 
-      <div className="text-sm mt-2">
-        Suggested constraints: <code>unique(problem_id, step_no)</code> on <b>HINT</b>; <code>unique(problem_id, topic_id)</code> on <b>PROBLEM_TAG</b>.
-      </div>
-
       {/* ---------------- Sequence Diagrams ---------------- */}
       <h2 className="mt-8">Sequence Diagrams</h2>
 
@@ -186,8 +181,10 @@ sequenceDiagram
   API->>DB: SELECT next hint by step_no
   DB-->>API: hint content
   API-->>FE: 200 {step_no, content}
-  FE-->>U: Display hint; user continues work
+  FE-->>U: Display hint
+  Note over U: User continues work
 `} />
+
 
       {/* Difficulty Classification (can be on-create or batch) */}
       <h3 className="mt-8">Difficulty Assessment & Classification</h3>
@@ -220,15 +217,17 @@ sequenceDiagram
   API->>DB: INSERT attempt (pending)
   DB-->>API: attempt_id
 
-  API->>LLM: Evaluate via rubric (compare to canonical; check steps)
-  LLM-->>API: {is_correct, feedback_text, next_hint?, confidence, rubric_json}
+  API->>LLM: Evaluate via rubric
+  Note over API,LLM: Compare to canonical solution and check steps
   API->>DB: UPDATE attempt (is_correct)
   API->>DB: INSERT eval_feedback (attempt_id, feedback, rubric_json, next_hint, confidence)
   DB-->>API: OK
 
   API-->>FE: 200 {is_correct, feedback_text, next_hint}
-  FE-->>U: Show result; offer retry or next problem
+  FE-->>U: Show result
+  Note over U: Learner can retry or move to next problem
 `} />
+
 
       {/* ---------------- Minimal Deployment Diagram ---------------- */}
       <h2 className="mt-10">Minimal Deployment Diagram</h2>
@@ -243,7 +242,6 @@ flowchart LR
   sm["AWS Secrets Manager"]
   cw["CloudWatch Logs/Metrics"]
   llm_api["LLM Provider API"]
-  vdb["Vector DB (Optional)"]
 
   user -->|HTTPS| cdn --> fe
   fe -->|HTTPS API| lb --> app
@@ -256,16 +254,11 @@ flowchart LR
 
       <ul className="text-sm mt-2">
         <li><b>Nginx</b>: TLS termination, gzip, reverse proxy to Gunicorn/Uvicorn.</li>
-        <li><b>FastAPI</b>: Orchestrates structured prompts + JSON schemas; adapters for hosted or self-hosted LLMs.</li>
+        <li><b>FastAPI</b>: Orchestrates structured prompts + JSON schemas</li>
         <li><b>RDS MySQL</b>: Stores problems, hints, attempts, evaluations, and classifications.</li>
-        <li><b>Vector DB (optional)</b>: Retrieve similar examples or formulas for context.</li>
         <li><b>Secrets Manager</b>: DB and LLM API keys kept out of code; rotate regularly.</li>
         <li><b>CloudWatch</b>: Logs/metrics; alarms on error rate and latency.</li>
       </ul>
-
-      <div className="text-sm mt-4">
-        Implementation notes: keep <b>Pydantic schemas</b> for structured outputs; enforce <b>transactions</b> when creating problems with hints/classification; prefer deterministic JSON outputs from the LLM for reliability.
-      </div>
 
     </article>
   </section>

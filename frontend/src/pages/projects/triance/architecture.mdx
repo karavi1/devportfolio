@@ -4,7 +4,6 @@ import Mermaid from '@/components/Mermaid'
 
 export const meta = {
   title: 'Triance Architecture',
-  // subtitle: 'System context, data model, hot paths, and minimal deployment',
 }
 
 <Head>
@@ -21,40 +20,13 @@ export const meta = {
 
     <article className="prose prose-slate max-w-none dark:prose-invert mt-6">
 
-
-            {/* ---------------- Minimal Deployment Diagram ---------------- */}
       <h2 className="mt-10">Tech Stack Overview</h2>
 
       Triance is built as a full stack health and fitness tracking platform using a React frontend (deployed via Vercel/CDN for static assets) and a FastAPI backend running on EC2 behind Nginx and Gunicorn/Uvicorn for high-performance API serving. Data is persisted in an Amazon RDS MySQL database, with SQLAlchemy models and Pydantic schemas ensuring type safe data validation. Authentication and user management are powered by FastAPI Users with JWT tokens, and workout/exercise data is organized through carefully designed relational models. AWS Secrets Manager is used to securely store DB credentials and JWT secrets, while CloudWatch provides centralized logging, metrics, and alarms for production monitoring. The codebase is container-friendly, supports Alembic migrations, and is fully end to end tested with pytest.
 
-      <h2 className="mt-10">Minimal Deployment Diagram</h2>
-      <Mermaid chart={`
-flowchart LR
-  user(("User"))
-  cdn["CDN/Edge (Vercel/Static Assets)"]
-  fe["React App"]
-  lb["Nginx Reverse Proxy"]
-  app["Gunicorn/Uvicorn<br/>FastAPI on EC2"]
-  rds["Amazon RDS (MySQL)"]
-  sm["AWS Secrets Manager"]
-  cw["CloudWatch Logs/Metrics"]
 
-  user -->|HTTPS| cdn --> fe
-  fe -->|HTTPS API| lb --> app
-  app --> rds
-  app --> sm
-  app --> cw
-`} />
-      <ul className="text-sm mt-2">
-        <li><b>Nginx</b>: TLS termination, static gzip, reverse proxy to Gunicorn/Uvicorn.</li>
-        <li><b>Gunicorn/Uvicorn</b>: ASGI server for FastAPI (workers tuned to CPU/RAM).</li>
-        <li><b>RDS MySQL</b>: production DB; add backups + IAM auth if desired.</li>
-        <li><b>CloudWatch</b>: structured logs & dashboards; alarms on latency/errors.</li>
-        <li><b>Secrets Manager</b>: DB creds/JWT secrets rotated out of code/env files.</li>
-      </ul>
-
-      {/* ---------------- System Context ---------------- */}
-      <h2>System Context</h2>
+      {/* ---------------- System Design ---------------- */}
+      <h2>System Design</h2>
       <Mermaid chart={`
 flowchart LR
   user(("User")) -->|HTTPS| fe["React (triance.app)"]
@@ -116,10 +88,6 @@ erDiagram
     float weight
   }
 `} />
-
-      <div className="text-sm mt-2">
-        Tip: add a DB unique constraint on <code>(logged_exercise_id, set_number)</code> to enforce set ordering per exercise.
-      </div>
 
       {/* ---------------- Sequence: Create Auth User ---------------- */}
       <h2 className="mt-8">Sequence Diagrams</h2>
@@ -269,6 +237,33 @@ sequenceDiagram
     API-->>FE: 400/409/422 with errors
   end
 `} />
+
+            {/* ---------------- Minimal Deployment Diagram ---------------- */}
+      <h2 className="mt-10">Minimal Deployment Diagram</h2>
+      <Mermaid chart={`
+flowchart LR
+  user(("User"))
+  cdn["CDN/Edge (Vercel/Static Assets)"]
+  fe["React App"]
+  lb["Nginx Reverse Proxy"]
+  app["Gunicorn/Uvicorn<br/>FastAPI on EC2"]
+  rds["Amazon RDS (MySQL)"]
+  sm["AWS Secrets Manager"]
+  cw["CloudWatch Logs/Metrics"]
+
+  user -->|HTTPS| cdn --> fe
+  fe -->|HTTPS API| lb --> app
+  app --> rds
+  app --> sm
+  app --> cw
+`} />
+      <ul className="text-sm mt-2">
+        <li><b>Nginx</b>: TLS termination, static gzip, reverse proxy to Gunicorn/Uvicorn.</li>
+        <li><b>Gunicorn/Uvicorn</b>: ASGI server for FastAPI (workers tuned to CPU/RAM).</li>
+        <li><b>RDS MySQL</b>: production DB; add backups + IAM auth if desired.</li>
+        <li><b>CloudWatch</b>: structured logs & dashboards; alarms on latency/errors.</li>
+        <li><b>Secrets Manager</b>: DB creds/JWT secrets rotated out of code/env files.</li>
+      </ul>
 
     </article>
   </section>
