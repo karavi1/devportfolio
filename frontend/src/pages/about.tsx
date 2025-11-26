@@ -27,29 +27,17 @@ const AboutPage: NextPage = () => {
         </p>
 
         <p>
-          While I had been there for years and gained several technical skills, my overall positive
-          impact on our world feels pretty minimal. I had originally joined without much
-          consideration for where my work would be going, since I felt that I needed experience to
-          do anything useful. But over time, I realized that I strongly resonate with the idea that
-          impact is measured by how much we can improve our society’s wellbeing and growth. After
-          leaving Amazon last year feeling disillusioned, I took some time off to work on
-          understanding how the world currently functions and if it would be possible to use
-          software to better our reality. We have many medical professionals working in the
-          healthcare field, students and scientists researching in universities and laboratories,
-          passionate people striving to improve our planet, and more and more. These people are
-          doing high stakes work everyday to help our society stand up tall and flourish. There is a
-          lot of opportunity to use technology to help boost their productivity and efficiency. I
-          find myself making more of an impact when I am able to use my software and analytical
-          skills to help peoples’ lives, physical and mental. What is the purpose of doing our work
-          if we aren’t growing and thriving as a whole?
+          Along the way, I realized that the real leverage of technology comes from how effectively it can elevate human capability. 
+          Across healthcare, research, education, and public service, there are professionals doing high-stakes work essential to our society’s wellbeing—and many of their tools, workflows, and knowledge systems are still fragmented or inefficient. 
+          This gap presents a major opportunity: software that improves clarity, reduces cognitive load, and scales human expertise can create disproportionate value. 
+          After taking time to study how different sectors operate, I’ve become focused on building systems that strengthen learning, reflection, and real-world decision-making. 
+          To me, impact is measured by how much we collectively grow—how effectively we use technology to empower the people who move our world forward. That is the direction I’m committed to building toward.
         </p>
 
         <p>
-          To reignite my love and interests in software development, I set out to work on a few
-          personal projects of my own that would help myself and possibly others in our day to day
-          lives. I am extremely passionate about fitness, reading, and education in general. If we
-          don’t have our physical health, what do we have? Aren’t we our best selves when we are
-          constantly learning? Through diving deeper into these questions, I built{" "}
+          
+          My recent projects, below, center on using software to enhance physical and mental wellbeing, streamline knowledge workflows, and help people and organizations operate with more insight and efficiency. I am extremely passionate about fitness, reading, and knowledge in general. If we
+          In finding ways to achieve this, I built{" "}
           <strong>Triance</strong>, <strong>Resonote</strong>, and <strong>MathTutor</strong>.
           Triance is a fitness tracking application, focusing on strength training, mobility, and
           cardio. Resonote is a reading and reflection and knowledge graph tool to help modularize
@@ -58,11 +46,11 @@ const AboutPage: NextPage = () => {
           in math, with problem deconstruction, solution composition and dynamic curriculum
           generation. Triance and Resonote were done independently, and MathTutor was built with a
           partner. Working on these projects, which I happily continue to grow today, reinvigorated
-          my belief in software’s utility to help people.
+          my belief in software’s utility to help people through knowledge management and encourage people and business thinking. 
         </p>
 
         <p>
-          For more information on these projects and my Amazon experience, please visit my GitHub profile:
+          For more information, feel free to visit my GitHub profile:
         </p>
 
         <ul>
