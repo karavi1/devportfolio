@@ -30,8 +30,8 @@ const experiences: Experience[] = [
   },
   {
     role: "Software Development Engineer II",
-    company: "Amazon (Global Retail)",
-    location: "Seattle, WA",
+    company: "Amazon",
+    location: "Remote / San Francisco, CA",
     dates: "Sep 2020 – Jun 2024",
     summary:
       "Owned ML infrastructure and APIs powering high-traffic retail widgets and global recommendation datasets.",
