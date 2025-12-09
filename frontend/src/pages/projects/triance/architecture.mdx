@@ -1,5 +1,6 @@
 import Head from 'next/head'
 import Navbar from '@/components/Navbar'
+import Footer from '@/components/Footer'
 import Mermaid from '@/components/Mermaid'
 
 export const meta = {
@@ -13,12 +14,28 @@ export const meta = {
 
 <Navbar />
 
-<main className="px-6 md:px-10 lg:px-16">
-  <section className="mx-auto max-w-4xl py-10">
-    <h1 className="text-3xl md:text-4xl font-bold">{meta.title}</h1>
-    <p className="mt-2 text-gray-600">{meta.subtitle}</p>
+<main className="relative overflow-hidden bg-slate-50">
+  <div className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-slate-50 via-white to-emerald-50" />
+  <section className="mx-auto max-w-5xl px-6 pb-16 pt-28">
+    <div className="rounded-3xl border border-slate-100 bg-white/80 p-6 shadow-sm backdrop-blur">
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">
+            Architecture
+          </p>
+          <h1 className="text-3xl md:text-4xl font-bold text-slate-900">{meta.title}</h1>
+          <p className="mt-2 text-slate-600 max-w-2xl">
+            Built to help people own their wellbeing—stronger, more mobile, more enduring—with
+            transparent data they can trust.
+          </p>
+        </div>
+        <div className="rounded-2xl bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-800">
+          FastAPI • React • AWS • MySQL
+        </div>
+      </div>
+    </div>
 
-    <article className="prose prose-slate max-w-none dark:prose-invert mt-6">
+    <article className="prose prose-slate max-w-none dark:prose-invert mt-8">
 
       <h2 className="mt-10">Tech Stack Overview</h2>
 
@@ -268,3 +285,5 @@ flowchart LR
     </article>
   </section>
 </main>
+
+<Footer />
